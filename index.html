@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+              integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <title>Fragrance: 향 보관소</title>
+        <style>
+          h1 {
+                font: bold 3.625em/0.9 "League Gothic", "Arial Narrow", "Arial, sans-serif";
+            }
+            .card > img {
+                background-color: gray;
+                width: auto;
+                height: 250px;
+            }
+            .card .heartBtn {
+                font-size: 200%;
+                position: relative;
+                top: -50px;
+                left: 85%;
+            }
+            .card-group {
+                margin: 1em 5em;
+            }
+            .heartBtn {
+                cursor: pointer;
+            }
+        </style>
+        <script>
+            $(document).ready(function () {
+                listing();
+            });
+            function listing() {
+                $.ajax({
+                    type: "GET",
+                    url: "/perfume",
+                    data: {},
+                    success: function (response) {
+                        let rows = response["perfumes"];
+                        for (let i = 0; i < rows.length; i++) {
+                            let id = rows[i]['id']
+                            let img = rows[i]['img']
+                            let name = rows[i]['name']
+                            let desc = rows[i]['desc']
+                            let brand = rows[i]['brand']
+                            let like = rows[i]['like']
+
+                            let temp_html = ``
+                            if (like == 0) {
+                                temp_html = `<div class="card">
+                                                <img src="${img}" class="card-img-top" alt="...">
+                                                <span class="heartBtn" onclick="addLike(${id})"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z"/></svg>
+                                                </span>
+                                                <div class="card-body">
+                                                    <h5 class="card-title">${name}</h5>
+                                                    <p class="card-text">${desc}</p>
+                                                    <p class="card-text"><small class="text-muted">${brand}</small></p>
+                                                </div>
+                                            </div>`
+                            } else if (like == 1) {
+                                temp_html = `<div class="card">
+                                                <img src="${img}" class="card-img-top" alt="...">
+                                                <div class="heartBtn" onclick="removeLike(${id})"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                                                </div>
+                                                <div class="card-body">
+                                                    <h5 class="card-title">${name}</h5>
+                                                    <p class="card-text">${desc}</p>
+                                                    <p class="card-text"><small class="text-muted">${brand}</small></p>
+                                                </div>
+                                            </div>`
+                            }
+                            $('#product-list').append(temp_html)
+                        }
+                    }
+                })
+            }
+            function addLike(like) {
+                $.ajax({
+                    type: "POST",
+                    url: "/perfume/like",
+                    data: {id_give: like},
+                    success: function (response) {
+                        console.log(response["msg"])
+                        window.location.reload()
+                    }
+                });
+            }
+
+            function removeLike(like) {
+                $.ajax({
+                    type: "POST",
+                    url: "/perfume/nolike",
+                    data: {id_give: like},
+                    success: function (response) {
+                        console.log(response["msg"])
+                        window.location.reload()
+                    }
+                });
+            };
+        </script>
+    </head>
+    <body>
+    </body>
+</html>
